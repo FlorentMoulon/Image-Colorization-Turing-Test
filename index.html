@@ -12,6 +12,8 @@
             --recolorized: #38A3A5;
             --original: #57CC99;
             --white: #FBFBF2;
+            --red: #E63946;
+            --green: #7AE582;
         }
 
         * {
@@ -153,12 +155,12 @@
         }
 
         .correct {
-            background-color: var(--original);
+            background-color: var(--green);
             color: var(--black);
         }
 
         .incorrect {
-            background-color: var(--recolorized);
+            background-color: var(--red);
             color: var(--white);
         }
 
@@ -257,17 +259,20 @@
             initializeTest();
             switchPage('testPage');
             
+            // Show buttons initially
+            document.querySelector('.choice-buttons').style.display = 'flex';
+            
             for (currentImageIndex = 0; currentImageIndex < testImages.length; currentImageIndex++) {
                 const image = testImages[currentImageIndex];
                 
-                // Show image
+                // Show new image
                 document.getElementById('testImage').src = image.path;
                 document.getElementById('testImage').style.display = 'block';
-                await wait(3000);
                 
-                // Hide image and show choice buttons
-                //document.getElementById('testImage').style.display = 'none';
-                //document.querySelector('.choice-buttons').style.display = 'flex';
+                // Start timer to hide image
+                setTimeout(() => {
+                    document.getElementById('testImage').style.display = 'none';
+                }, 3000);
                 
                 // Wait for user choice
                 const choice = await getUserChoice();
@@ -281,8 +286,7 @@
                     correct: (image.is_original && choice === 'original') || (!image.is_original && choice === 'recolorized')
                 });
                 
-                // Hide buttons and clear image
-                document.querySelector('.choice-buttons').style.display = 'none';
+                // Clear image and wait briefly before next
                 document.getElementById('testImage').src = '';
                 await wait(500);
             }
@@ -325,26 +329,27 @@
 
             let scoreHTML = `
                 <div class="language-section">
-                    <div class="language-header">English</div>
                     <p>Correct answers: ${correct}/${total}</p>
                     <p>Accuracy: ${accuracy}%</p>
                 </div>
                 <div class="language-section">
-                    <div class="language-header">Français</div>
                     <p>Réponses correctes: ${correct}/${total}</p>
                     <p>Précision: ${accuracy}%</p>
                 </div>
-                <h3>Detailed Results | Résultats Détaillés:</h3>
+                <h3>Detailed Results :</h3>
             `;
 
             results.forEach(result => {
                 const resultClass = result.correct ? 'correct' : 'incorrect';
-                const resultText = result.correct ? 'Correct | Correct' : 'Incorrect | Incorrect';
-                const correctAnswer = result.is_original ? 'Original | Original' : 'Recolorized | Recolorisée';
+                const resultText = result.correct ? 'Correct' : 'Incorrect';
+                const correctAnswer = result.is_original ? 'Original' : 'Recolorized';
                 scoreHTML += `
                     <div class="result-item ${resultClass}">
                         <img src="${result.image_path}" alt="Result image">
-                        <span>Your choice | Votre choix: ${result.user_choice} <br>| Correct answer | Réponse correcte: ${correctAnswer} (${resultText})</span>
+                        <span>
+                            Your choice : ${result.user_choice} <br>
+                            Correct answer : ${correctAnswer} (${resultText})
+                        </span>
                     </div>
                 `;
             });
