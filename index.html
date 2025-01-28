@@ -119,6 +119,15 @@
             width: inherit;
             min-width: 100px;
             max-width: 200px;
+            z-index: 1;
+        }
+
+        .timeOver {
+            position: absolute;
+            z-index: 0;
+            width: inherit;
+            min-width: 100px;
+            max-width: 200px;
         }
 
         .choice-buttons {
@@ -229,6 +238,10 @@
     <div id="testPage" class="page">
         <h2 id="imageTitle"></h2> <!-- Dynamic Title -->
         <div id="imageContainer">
+            <div class="timeOver">
+                <p>3s passed but you can still answer</p>
+                <p>Les 3s sont passées mais vous pouvez toujours répondre</p>
+            </div>
             <img id="testImage" src="">
         </div>
         <div class="choice-buttons">
