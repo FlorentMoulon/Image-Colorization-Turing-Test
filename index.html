@@ -51,6 +51,25 @@
             background-color: #f0f0f0;
             border-radius: 5px;
         }
+        .result-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .result-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -93,8 +112,8 @@
 
     <script>
         // Sample images - replace with actual image filenames
-        const originalImages = ['apple-000.jpg', 'apple-001.jpg', 'apple-002.jpg'];
-        const recolorizedImages = ['apple-000.jpg', 'apple-001.jpg', 'apple-002.jpg'];
+        const originalImages = ['img1.jpg', 'img2.jpg'];
+        const recolorizedImages = ['img3.jpg', 'img4.jpg'];
         
         let testImages = [];
         let currentImageIndex = 0;
@@ -122,9 +141,11 @@
                 
                 // Show image
                 document.getElementById('testImage').src = image.path;
+                document.getElementById('testImage').style.display = 'block';
                 await wait(3000);
                 
-                // Show choice buttons
+                // Hide image and show choice buttons
+                document.getElementById('testImage').style.display = 'none';
                 document.querySelector('.choice-buttons').style.display = 'flex';
                 
                 // Wait for user choice
@@ -135,7 +156,8 @@
                     image_path: image.path,
                     is_original: image.is_original,
                     pseudo: userPseudo,
-                    user_choice: choice
+                    user_choice: choice,
+                    correct: (image.is_original && choice === 'original') || (!image.is_original && choice === 'recolorized')
                 });
                 
                 // Hide buttons and clear image
@@ -167,11 +189,8 @@
         }
 
         function copyResults() {
-            const resultText = results.map(r => 
-                `Image: ${r.image_path}\nOriginal: ${r.is_original}\nYour Choice: ${r.user_choice}\n`
-            ).join('\n');
-            
-            navigator.clipboard.writeText(resultText).then(() => {
+            const resultJSON = JSON.stringify(results, null, 2);
+            navigator.clipboard.writeText(resultJSON).then(() => {
                 window.open('https://docs.google.com/forms/d/your-form-id', '_blank');
                 showScore();
             });
@@ -179,15 +198,28 @@
 
         function showScore() {
             switchPage('scorePage');
-            const correct = results.filter(r => 
-                (r.is_original && r.user_choice === 'original') ||
-                (!r.is_original && r.user_choice === 'recolorized')
-            ).length;
-            
-            const scoreHTML = `
-                <p>Correct answers: ${correct}/${results.length}</p>
-                <p>Accuracy: ${(correct/results.length*100).toFixed(1)}%</p>
+            const correct = results.filter(r => r.correct).length;
+            const total = results.length;
+            const accuracy = (correct / total * 100).toFixed(1);
+
+            let scoreHTML = `
+                <p>Correct answers: ${correct}/${total}</p>
+                <p>Accuracy: ${accuracy}%</p>
+                <h3>Detailed Results:</h3>
             `;
+
+            results.forEach(result => {
+                const resultClass = result.correct ? 'correct' : 'incorrect';
+                const resultText = result.correct ? 'Correct' : 'Incorrect';
+                const correctAnswer = result.is_original ? 'Original' : 'Recolorized';
+                scoreHTML += `
+                    <div class="result-item ${resultClass}">
+                        <img src="${result.image_path}" alt="Result image">
+                        <span>Your choice: ${result.user_choice} | Correct answer: ${correctAnswer} (${resultText})</span>
+                    </div>
+                `;
+            });
+
             document.getElementById('scoreResult').innerHTML = scoreHTML;
         }
 
