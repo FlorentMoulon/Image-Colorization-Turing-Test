@@ -215,19 +215,21 @@
 
     <!-- Submit Page -->
     <div id="submitPage" class="page">
-        <h2>Submit Your Result | Soumettez Vos Résultats</h2>
+        <h2>Submit Your Result <br> Soumettez Vos Résultats</h2>
         <div class="language-section">
-            <p>Please click the button below to open the Google Form in a new tab and paste the copied results. Then come back to see your score.</p>
+            <p><b>Your results have bee copied AUTOMATICALLY in your clipboard !</b></p>
+            <p>Please click the button below to open the Google Form in a new tab and paste the results. Then come back to see your score.</p>
         </div>
         <div class="language-section">
-            <p>Veuillez cliquer sur le bouton ci-dessous pour ouvrir le formulaire Google dans un nouvel onglet et coller les résultats copiés. Revenez ensuite pour voir votre score.</p>
+            <p><b>Vos résultats ont été copiés AUTOMATIQUEMENT dans votre presse papier !</b></p>
+            <p>Veuillez cliquer sur le bouton ci-dessous pour ouvrir le formulaire Google dans un nouvel onglet et coller les résultats. Revenez ensuite pour voir votre score.</p>
         </div>
-        <button onclick="copyResults()">Copy Results and Open Form <br> Copier les Résultats et Ouvrir le Formulaire</button>
+        <button onclick="copyResults()">Open Form <br>Ouvrir le Formulaire</button>
     </div>
 
     <!-- Score Page -->
     <div id="scorePage" class="page">
-        <h2>Your Results | Vos Résultats</h2>
+        <h2>Your Results <br> Vos Résultats</h2>
         <div id="scoreResult"></div>
     </div>
 
@@ -337,7 +339,7 @@
 
         function showScore() {
             switchPage('scorePage');
-            const correct = results.filter(r => r.correct).length;
+            const correct = results.filter(r => r.is_original == r.user_choice).length;
             const total = results.length;
             const accuracy = (correct / total * 100).toFixed(1);
 
@@ -356,7 +358,7 @@
             results.forEach(result => {
                 const resultClass = result.is_original == result.user_choice ? 'correct' : 'incorrect';
                 const resultText = result.is_original == result.user_choice ? 'Correct' : 'Incorrect';
-                const correctAnswer = result.is_original ? 'Original' : 'Recolorized';
+                const correctAnswer = result.is_original == 'original' ? 'Original' : 'Recolorized';
                 scoreHTML += `
                     <div class="result-item ${resultClass}">
                         <img src="${result.image_path}" alt="Result image">
