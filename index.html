@@ -32,7 +32,7 @@
             display: none;
             min-height: 100vh;
             padding: 2rem;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -58,8 +58,8 @@
 
         p {
             font-size: 1.2rem;
-            max-width: 600px;
-            text-align: center;
+            max-width: 800px;
+            text-align: left;
             margin: 1rem auto;
         }
 
@@ -112,10 +112,11 @@
         }
 
         #testImage {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 8px;
+            width: inherit;
+            min-width: 100px;
+            max-width: 200px;
         }
 
         .choice-buttons {
@@ -134,7 +135,7 @@
 
         #scoreResult {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             background: white;
             border-radius: 16px;
             padding: 2rem;
@@ -180,15 +181,24 @@
     <!-- Home Page -->
     <div id="homePage" class="page active-page">
         <h1>Image Colorization Turing Test</h1>
-        <div class="english">
-            <p>You will be presented N images of 100*100 pixel, some of them are original pictures, some are grayscale images colorized using an AI program. You will have 3s to look at an image and then you'll have to say if it was original or recolorized. At end, you'll have to copy-paste a text containing your result and submit it in a Google Form. Thank in advance!</p>
+        
+        <div class="language-section">
+            <p>You'll be presented N images of 100*100 pixel, some of them are original pictures, some are grayscale images colorized using an AI program.</p>
+            <p>You'll have 3s to look at an image and then you'll have to say if it was original or recolorized.</p>
+            <p>At end, you'll have to copy-paste a text containing your result and submit it in a Google Form. Thank in advance!</p>
         </div>
-        <div class="french">
-            <p>[French translation of the above text]</p>
+
+        <div class="language-section">
+            <p>Vous allez voir N images de 100*100 pixels, certaines sont des images originales, d'autres sont des images en noir & blanc colorisées par un programme d'IA.</p>
+            <p>Vous aurez 3s pour regarder chaque image puis vous devrez dire si elle était originale ou recolorisée.</p>
+            <p>À la fin, vous devrez copier-coller un texte contenant vos résultats et le soumettre dans un formulaire Google. Merci d'avance !</p>
         </div>
-        <input type="text" id="pseudo" placeholder="Enter your pseudo">
-        <button onclick="startTest()">Start Test</button>
+
+        <input type="text" id="pseudo" placeholder="Enter your pseudo | Entrez votre pseudo">
+        <button onclick="startTest()">Start Test | Commencer le Test</button>
     </div>
+
+
 
     <!-- Test Page -->
     <div id="testPage" class="page">
@@ -203,14 +213,21 @@
 
     <!-- Submit Page -->
     <div id="submitPage" class="page">
-        <h2>Submit Your Result</h2>
-        <p>Please click the button below to open the Google Form in a new tab and paste the copied results. Then come back to see your score.</p>
-        <button onclick="copyResults()">Copy Results and Open Form</button>
+        <h2>Submit Your Result | Soumettez Vos Résultats</h2>
+        <div class="language-section">
+            <div class="language-header">English</div>
+            <p>Please click the button below to open the Google Form in a new tab and paste the copied results. Then come back to see your score.</p>
+        </div>
+        <div class="language-section">
+            <div class="language-header">Français</div>
+            <p>Veuillez cliquer sur le bouton ci-dessous pour ouvrir le formulaire Google dans un nouvel onglet et coller les résultats copiés. Revenez ensuite pour voir votre score.</p>
+        </div>
+        <button onclick="copyResults()">Copy Results and Open Form | Copier les Résultats et Ouvrir le Formulaire</button>
     </div>
 
     <!-- Score Page -->
     <div id="scorePage" class="page">
-        <h2>Your Results</h2>
+        <h2>Your Results | Vos Résultats</h2>
         <div id="scoreResult"></div>
     </div>
 
@@ -307,19 +324,27 @@
             const accuracy = (correct / total * 100).toFixed(1);
 
             let scoreHTML = `
-                <p>Correct answers: ${correct}/${total}</p>
-                <p>Accuracy: ${accuracy}%</p>
-                <h3>Detailed Results:</h3>
+                <div class="language-section">
+                    <div class="language-header">English</div>
+                    <p>Correct answers: ${correct}/${total}</p>
+                    <p>Accuracy: ${accuracy}%</p>
+                </div>
+                <div class="language-section">
+                    <div class="language-header">Français</div>
+                    <p>Réponses correctes: ${correct}/${total}</p>
+                    <p>Précision: ${accuracy}%</p>
+                </div>
+                <h3>Detailed Results | Résultats Détaillés:</h3>
             `;
 
             results.forEach(result => {
                 const resultClass = result.correct ? 'correct' : 'incorrect';
-                const resultText = result.correct ? 'Correct' : 'Incorrect';
-                const correctAnswer = result.is_original ? 'Original' : 'Recolorized';
+                const resultText = result.correct ? 'Correct | Correct' : 'Incorrect | Incorrect';
+                const correctAnswer = result.is_original ? 'Original | Original' : 'Recolorized | Recolorisée';
                 scoreHTML += `
                     <div class="result-item ${resultClass}">
                         <img src="${result.image_path}" alt="Result image">
-                        <span>Your choice: ${result.user_choice} <br>| Correct answer: ${correctAnswer} (${resultText})</span>
+                        <span>Your choice | Votre choix: ${result.user_choice} <br>| Correct answer | Réponse correcte: ${correctAnswer} (${resultText})</span>
                     </div>
                 `;
             });
