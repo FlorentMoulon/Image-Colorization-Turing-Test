@@ -5,70 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Colorization Turing Test</title>
     <style>
+        :root {
+            --black: #112D3F;
+            --accent: #22577A;
+            --accent2: #80ED99;
+            --recolorized: #38A3A5;
+            --original: #57CC99;
+            --white: #FBFBF2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
         .page {
             display: none;
-            padding: 20px;
+            min-height: 100vh;
+            padding: 2rem;
             max-width: 800px;
             margin: 0 auto;
-            font-family: Arial, sans-serif;
         }
+
         .active-page {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
         }
-        #imageContainer {
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
             text-align: center;
-            margin: 20px 0;
+            margin-bottom: 1.5rem;
         }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--accent);
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            text-align: center;
+            margin: 1rem auto;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: 3px solid var(--accent);
+            border-radius: 12px;
+            background: var(--white);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent2);
+            box-shadow: 0 0 0 3px rgba(34, 87, 122, 0.2);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            background: var(--accent);
+            color: var(--white);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            background: var(--accent2);
+            color: var(--black);
+        }
+
+        #imageContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--white);
+            box-shadow: 0 8px 24px rgba(17, 45, 63, 0.1);
+        }
+
         #testImage {
             width: 100px;
             height: 100px;
-            border: 2px solid #333;
+            object-fit: cover;
+            border-radius: 8px;
         }
+
         .choice-buttons {
             display: none;
             justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 2rem;
+            width: 100%;
         }
-        button {
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-        }
+
         #originalBtn {
-            background-color: #4CAF50;
-            color: white;
+            background-color: var(--original);
         }
+
         #recolorizedBtn {
-            background-color: #f44336;
-            color: white;
+            background-color: var(--recolorized);
         }
+
         #scoreResult {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(17, 45, 63, 0.1);
         }
+
         .result-item {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
         }
+
         .correct {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
+            background-color: var(--original);
+            color: var(--black);
         }
+
         .incorrect {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
+            background-color: var(--recolorized);
+            color: var(--white);
         }
+
         .result-item img {
-            width: 50px;
-            height: 50px;
-            margin-right: 10px;
-            vertical-align: middle;
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .score-header {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
         }
     </style>
 </head>
