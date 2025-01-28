@@ -217,7 +217,7 @@
     <div id="submitPage" class="page">
         <h2>Submit Your Result <br> Soumettez Vos Résultats</h2>
         <div class="language-section">
-            <p><b>Your results have bee copied AUTOMATICALLY in your clipboard !</b></p>
+            <p><b>Your results have been copied AUTOMATICALLY in your clipboard !</b></p>
             <p>Please click the button below to open the Google Form in a new tab and paste the results. Then come back to see your score.</p>
         </div>
         <div class="language-section">
@@ -225,10 +225,8 @@
             <p>Veuillez cliquer sur le bouton ci-dessous pour ouvrir le formulaire Google dans un nouvel onglet et coller les résultats. Revenez ensuite pour voir votre score.</p>
         </div>
         <button onclick="copyResults()">Open Form <br>Ouvrir le Formulaire</button>
-    </div>
 
-    <!-- Score Page -->
-    <div id="scorePage" class="page">
+
         <h2>Your Results <br> Vos Résultats</h2>
         <div id="scoreResult"></div>
     </div>
@@ -308,6 +306,7 @@
             }
 
             switchPage('submitPage');
+            showScore();
         }
 
         function getUserChoice() {
@@ -333,12 +332,10 @@
             const resultJSON = JSON.stringify(results, null, 2);
             navigator.clipboard.writeText(resultJSON).then(() => {
                 window.open('https://docs.google.com/forms/d/e/1FAIpQLSc6eLs3mnB8w0a2BudDTHZkguizItEr4uzHJLTs5c9IUXh9eA/viewform?usp=header', '_blank');
-                showScore();
             });
         }
 
         function showScore() {
-            switchPage('scorePage');
             const correct = results.filter(r => r.is_original == r.user_choice).length;
             const total = results.length;
             const accuracy = (correct / total * 100).toFixed(1);
