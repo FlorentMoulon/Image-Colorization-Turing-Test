@@ -177,6 +177,30 @@
             margin-bottom: 1.5rem;
             color: var(--accent);
         }
+
+        .score-columns {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .score-columns .language-section {
+            flex: 1;
+            text-align: left;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .score-columns {
+                flex-direction: row;
+            }
+
+            .score-columns .language-section {
+                border: 1px solid #ccc;
+                border-radius: 12px;
+                margin: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -336,20 +360,30 @@
         }
 
         function showScore() {
-            const correct = results.filter(r => r.is_original == r.user_choice).length;
+            const correct = results.filter(r => r.user_choice==r.is_original).length;
             const total = results.length;
+            const correctOriginal = results.filter(r => r.user_choice==r.is_original && r.is_original=='original').length;
+            const totalOriginal = results.filter(r => r.is_original=='original').length;
+            const correctRecolorized = results.filter(r => r.user_choice==r.is_original && r.is_original!='original').length;
+            const totalRecolorized = results.filter(r => r.is_original!='original').length;
+
             const accuracy = (correct / total * 100).toFixed(1);
+            const accuracyOriginal = totalOriginal ? (correctOriginal / totalOriginal * 100).toFixed(1) : 'N/A';
+            const accuracyRecolorized = totalRecolorized ? (correctRecolorized / totalRecolorized * 100).toFixed(1) : 'N/A';
 
             let scoreHTML = `
-                <div class="language-section">
-                    <p>Correct answers: ${correct}/${total}</p>
-                    <p>Accuracy: ${accuracy}%</p>
+                <div class="score-columns">
+                    <div class="language-section">
+                        <p>Total correct answers: ${correct}/${total} (${accuracy}%)</p>
+                        <p>Correct answers for Original: ${correctOriginal}/${totalOriginal} (${accuracyOriginal}%)</p>
+                        <p>Correct answers for Recolorized: ${correctRecolorized}/${totalRecolorized} (${accuracyRecolorized}%)</p>
+                    </div>
+                    <div class="language-section">
+                        <p>Réponses correctes totales: ${correct}/${total} (${accuracy}%)</p>
+                        <p>Réponses correctes pour Original: ${correctOriginal}/${totalOriginal} (${accuracyOriginal}%)</p>
+                        <p>Réponses correctes pour Recolorisé: ${correctRecolorized}/${totalRecolorized} (${accuracyRecolorized}%)</p>
+                    </div>
                 </div>
-                <div class="language-section">
-                    <p>Réponses correctes: ${correct}/${total}</p>
-                    <p>Précision: ${accuracy}%</p>
-                </div>
-                <h3>Detailed Results :</h3>
             `;
 
             results.forEach(result => {
