@@ -204,8 +204,9 @@
 
     <!-- Test Page -->
     <div id="testPage" class="page">
+        <h2 id="imageTitle"></h2> <!-- Dynamic Title -->
         <div id="imageContainer">
-            <img id="testImage" src="" alt="Test image">
+            <img id="testImage" src="">
         </div>
         <div class="choice-buttons">
             <button id="originalBtn">Original</button>
@@ -233,62 +234,78 @@
 
     <script>
         // Sample images - replace with actual image filenames
-        const originalImages = ['apple-000.jpg', 'apple-001.jpg'];
-        const recolorizedImages = ['apple-000.jpg', 'apple-001.jpg'];
+        const originalImages = ['apple-000.jpg', 'apple-001.jpg', 'apple-002.jpg', 'apple-003.jpg', 'apple-004.jpg'];
+        const recolorizedImages = ['apple-000.jpg', 'apple-001.jpg', 'apple-002.jpg', 'apple-003.jpg', 'apple-004.jpg'];
+        const numberOfImages = 2;
         
         let testImages = [];
         let currentImageIndex = 0;
         let results = [];
         let userPseudo = '';
+        
 
         function initializeTest() {
-            // Create combined array with original/recolorized flags
-            testImages = [
-                ...originalImages.map(img => ({ path: `images/original/${img}`, is_original: true })),
-                ...recolorizedImages.map(img => ({ path: `images/recolorized/${img}`, is_original: false }))
-            ];
+            // Create arrays of all images with their flags
+            const allOriginal = originalImages.map(img => ({ 
+                path: `images/original/${img}`, 
+                is_original: true 
+            }));
+            const allRecolorized = recolorizedImages.map(img => ({ 
+                path: `images/recolorized/${img}`, 
+                is_original: false 
+            }));
             
-            // Shuffle the images
-            testImages = testImages.sort(() => Math.random() - 0.5);
+            // Randomly select images from each category
+            const selectedOriginal = allOriginal.sort(() => Math.random() - 0.5).slice(0, numberOfImages);
+            const selectedRecolorized = allRecolorized.sort(() => Math.random() - 0.5).slice(0, numberOfImages);
+            
+            // Combine and shuffle final selection
+            testImages = [...selectedOriginal, ...selectedRecolorized]
+                .sort(() => Math.random() - 0.5);
         }
 
         async function startTest() {
             userPseudo = document.getElementById('pseudo').value || 'anonymous';
             initializeTest();
             switchPage('testPage');
-            
+
             // Show buttons initially
             document.querySelector('.choice-buttons').style.display = 'flex';
-            
+
             for (currentImageIndex = 0; currentImageIndex < testImages.length; currentImageIndex++) {
                 const image = testImages[currentImageIndex];
-                
+
+                // Update the title to show the current image number
+                document.getElementById('imageTitle').innerText = `Image ${currentImageIndex + 1}/${testImages.length}`;
+
                 // Show new image
                 document.getElementById('testImage').src = image.path;
                 document.getElementById('testImage').style.display = 'block';
-                
-                // Start timer to hide image
-                setTimeout(() => {
+
+                // Start a timer to hide the image
+                let timer = setTimeout(() => {
                     document.getElementById('testImage').style.display = 'none';
                 }, 3000);
-                
+
                 // Wait for user choice
                 const choice = await getUserChoice();
-                
+
+                // Cancel the timer to prevent it from hiding the next image
+                clearTimeout(timer);
+
                 // Record result
                 results.push({
                     image_path: image.path,
                     is_original: image.is_original,
-                    pseudo: userPseudo,
                     user_choice: choice,
-                    correct: (image.is_original && choice === 'original') || (!image.is_original && choice === 'recolorized')
+                    pseudo: userPseudo,
                 });
-                
-                // Clear image and wait briefly before next
+
+                // Clear the image and wait briefly before moving to the next one
                 document.getElementById('testImage').src = '';
                 await wait(500);
             }
-            
+
             switchPage('submitPage');
         }
 
@@ -296,16 +313,16 @@
             return new Promise(resolve => {
                 const originalBtn = document.getElementById('originalBtn');
                 const recolorizedBtn = document.getElementById('recolorizedBtn');
-                
+
                 const handleChoice = choice => {
                     originalBtn.removeEventListener('click', originalHandler);
                     recolorizedBtn.removeEventListener('click', recolorizedHandler);
                     resolve(choice);
                 };
-                
+
                 const originalHandler = () => handleChoice('original');
                 const recolorizedHandler = () => handleChoice('recolorized');
-                
+
                 originalBtn.addEventListener('click', originalHandler);
                 recolorizedBtn.addEventListener('click', recolorizedHandler);
             });
