@@ -196,7 +196,6 @@
             <p>À la fin, vous devrez copier-coller un texte contenant vos résultats et le soumettre dans un formulaire Google. Merci d'avance !</p>
         </div>
 
-        <input type="text" id="pseudo" placeholder="Enter your pseudo | Entrez votre pseudo">
         <button onclick="startTest()">Start Test | Commencer le Test</button>
     </div>
 
@@ -241,7 +240,8 @@
         let testImages = [];
         let currentImageIndex = 0;
         let results = [];
-        let userPseudo = '';
+        // generate a random user pseudo (8digits numbers)
+        let userPseudo = Math.floor(10000000 + Math.random() * 90000000);
         
 
         function initializeTest() {
@@ -265,7 +265,6 @@
         }
 
         async function startTest() {
-            userPseudo = document.getElementById('pseudo').value || 'anonymous';
             initializeTest();
             switchPage('testPage');
 
@@ -296,7 +295,7 @@
                 // Record result
                 results.push({
                     image_path: image.path,
-                    is_original: image.is_original,
+                    is_original: image.is_original ? 'original' : 'recolorized',
                     user_choice: choice,
                     pseudo: userPseudo,
                 });
@@ -355,8 +354,8 @@
             `;
 
             results.forEach(result => {
-                const resultClass = result.correct ? 'correct' : 'incorrect';
-                const resultText = result.correct ? 'Correct' : 'Incorrect';
+                const resultClass = result.is_original == result.user_choice ? 'correct' : 'incorrect';
+                const resultText = result.is_original == result.user_choice ? 'Correct' : 'Incorrect';
                 const correctAnswer = result.is_original ? 'Original' : 'Recolorized';
                 scoreHTML += `
                     <div class="result-item ${resultClass}">
