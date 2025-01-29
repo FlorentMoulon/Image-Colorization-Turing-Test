@@ -308,19 +308,25 @@
             // Show buttons initially
             document.querySelector('.choice-buttons').style.display = 'flex';
 
+            testImage = document.getElementById('testImage')
+            timeOver = document.querySelector('.timeOver')
+
             for (currentImageIndex = 0; currentImageIndex < testImages.length; currentImageIndex++) {
                 const image = testImages[currentImageIndex];
+
+                // Show new image
+                testImage.src = image.path;
+                testImage.style.display = 'block';
+                timeOver.style.display = 'none';
 
                 // Update the title to show the current image number
                 document.getElementById('imageTitle').innerText = `Image ${currentImageIndex + 1}/${testImages.length}`;
 
-                // Show new image
-                document.getElementById('testImage').src = image.path;
-                document.getElementById('testImage').style.display = 'block';
 
                 // Start a timer to hide the image
                 let timer = setTimeout(() => {
-                    document.getElementById('testImage').style.display = 'none';
+                    timeOver.style.display = 'block';
+                    testImage.style.display = 'none';
                 }, 3000);
 
                 // Wait for user choice
@@ -338,8 +344,8 @@
                 });
 
                 // Clear the image and wait briefly before moving to the next one
-                document.getElementById('testImage').src = '';
-                await wait(500);
+                testImage.src = '';
+                await wait(5);
             }
 
             switchPage('submitPage');
